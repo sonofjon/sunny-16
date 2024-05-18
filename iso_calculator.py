@@ -127,8 +127,8 @@ HTML_TEMPLATE = """
       </select>
       <input type="checkbox" name="lock_iso" {{ 'checked' if lock_iso }}> Lock
     </div>
+    <hr> <!-- Horizontal rule as a separator -->
 
-    <hr> <!-- Separator above the button -->
     <button type="submit">Calculate</button>
 
     <!-- Conditional outputs -->
