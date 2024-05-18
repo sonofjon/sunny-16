@@ -233,7 +233,7 @@ def calculate_variable():
                         )
                         data["result_key"] = "ISO"
             except ValueError as e:
-                data["error"] = f"Invalid input: {str(e)}"
+                data["error"] = f"Invalid input: {e}"
 
     return render_template_string(
         HTML_TEMPLATE,
