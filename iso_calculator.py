@@ -218,10 +218,6 @@ def calculate_variable():
                         )
                         data["result_key"] = "Shutter Speed"
                 elif not data["lock_iso"]:
-                    if data["shutterspeed"] == 0:
-                        raise ValueError(
-                            "Shutter speed must not be zero when calculating ISO."
-                        )
                     calculated_iso = (
                         100
                         * ((data["aperture"] ** 2) / data["shutterspeed"])
