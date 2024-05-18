@@ -51,7 +51,7 @@ shutter_speeds = [
 shutter_speed_labels = ["1s" if s == 1 else f"1/{1/s:.0f}s" for s in shutter_speeds]
 shutter_speed_options = list(zip(shutter_speeds, shutter_speed_labels))
 
-lighting_conditions = {
+light_conditions = {
     16: "Snow/Sand",
     15: "Sunny",
     14: "Slight Overcast",
@@ -60,8 +60,8 @@ lighting_conditions = {
     11: "Open Shade/Sunset",
 }
 ev_options = [
-    (ev, f"EV {ev}: {lighting_conditions[ev]}")
-    for ev in sorted(lighting_conditions.keys(), reverse=True)
+    (ev, f"EV {ev}: {light_conditions[ev]}")
+    for ev in sorted(light_conditions.keys(), reverse=True)
 ]
 
 
