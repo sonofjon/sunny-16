@@ -49,7 +49,9 @@ shutter_speeds = [
     1 / 4000,
     1 / 8000,
 ]
-shutter_speed_labels = ["1s" if s == 1 else f"1/{1/s:.0f}s" for s in shutter_speeds]
+shutter_speed_labels = [
+    "1s" if s == 1 else f"1/{1/s:.0f}s" for s in shutter_speeds
+]
 shutter_speed_options = list(zip(shutter_speeds, shutter_speed_labels))
 
 light_conditions = {
