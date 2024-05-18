@@ -108,7 +108,7 @@ HTML_TEMPLATE = """
       </select>
       <input type="checkbox" name="lock_aperture" {{ 'checked' if lock_aperture }}> Lock
     </div>
-    
+
     <!-- Shutter Speed Selection -->
     <div>
       <label for="shutterspeed">Shutter Speed:</label>
@@ -119,7 +119,7 @@ HTML_TEMPLATE = """
       </select>
       <input type="checkbox" name="lock_shutterspeed" {{ 'checked' if lock_shutter_speed }}> Lock
     </div>
-    
+
     <!-- ISO Selection -->
     <div>
       <label for="iso">ISO:</label>
