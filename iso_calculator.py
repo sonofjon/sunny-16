@@ -1,3 +1,15 @@
+"""A web-based Sunny 16 rule calculator using Flask.
+
+This module implements a Flask application to help photographers calculate
+the correct aperture, shutter speed, or ISO based on the Sunny 16 rule and
+ambient light conditions.
+
+Dependencies:
+- Flask
+- Python's math module for calculations
+
+"""
+
 import math
 
 from flask import Flask, render_template_string, request
