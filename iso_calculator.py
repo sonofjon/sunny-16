@@ -84,68 +84,89 @@ HTML_TEMPLATE = """
 <!doctype html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Sunny 16 Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .container {
+      margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
-  <h1>Sunny 16 Calculator</h1>
+  <div class="container">
+    <h1 class="text-center mb-4">Sunny 16 Calculator</h1>
 
-  <form method="post">
-    <!-- Exposure Value at the top -->
-    <div>
-      <label for="ev">Exposure Value:</label>
-      <select name="ev" required>
-        {% for value, description in ev_options %}
-          <option value="{{ value }}" {{ 'selected' if value == ev }}>{{ description }}</option>
-        {% endfor %}
-      </select>
-    </div>
-    <hr> <!-- Horizontal rule as a separator -->
+    <form method="post" class="needs-validation" novalidate>
+      <div class="row g-3">
+        <!-- Exposure Value Selection -->
+        <div class="col-md-6">
+          <label for="ev" class="form-label">Exposure Value:</label>
+          <select name="ev" id="ev" class="form-select" required>
+            {% for value, description in ev_options %}
+            <option value="{{ value }}" {{ 'selected' if value == ev }}>{{ description }}</option>
+            {% endfor %}
+          </select>
+        </div>
 
-    <!-- Aperture Selection -->
-    <div>
-      <label for="aperture">Aperture:</label>
-      <select name="aperture">
-        {% for a, label in aperture_options %}
-          <option value="{{ a }}" {{ 'selected' if a == aperture }}>{{ label }}</option>
-        {% endfor %}
-      </select>
-      <input type="checkbox" name="lock_aperture" {{ 'checked' if lock_aperture }}> Lock
-    </div>
+        <!-- Aperture Selection -->
+        <div class="col-md-6">
+          <label for="aperture" class="form-label">Aperture:</label>
+          <select name="aperture" id="aperture" class="form-select">
+            {% for a, label in aperture_options %}
+            <option value="{{ a }}" {{ 'selected' if a == aperture }}>{{ label }}</option>
+            {% endfor %}
+          </select>
+          <input type="checkbox" name="lock_aperture" {{ 'checked' if lock_aperture }}> Lock
+        </div>
 
-    <!-- Shutter Speed Selection -->
-    <div>
-      <label for="shutterspeed">Shutter Speed:</label>
-      <select name="shutterspeed">
-        {% for speed, label in shutter_speed_options %}
-          <option value="{{ speed }}" {{ 'selected' if speed == shutterspeed }}>{{ label }}</option>
-        {% endfor %}
-      </select>
-      <input type="checkbox" name="lock_shutterspeed" {{ 'checked' if lock_shutter_speed }}> Lock
-    </div>
+        <!-- Shutter Speed Selection -->
+        <div class="col-md-6">
+          <label for="shutterspeed" class="form-label">Shutter Speed:</label>
+          <select name="shutterspeed" id="shutterspeed" class="form-select">
+            {% for speed, label in shutter_speed_options %}
+            <option value="{{ speed }}" {{ 'selected' if speed == shutterspeed }}>{{ label }}</option>
+            {% endfor %}
+          </select>
+          <input type="checkbox" name="lock_shutterspeed" {{ 'checked' if lock_shutter_speed }}> Lock
+        </div>
 
-    <!-- ISO Selection -->
-    <div>
-      <label for="iso">ISO:</label>
-      <select name="iso">
-        {% for i in iso_values %}
-          <option value="{{ i }}" {{ 'selected' if i == iso }}>{{ i }}</option>
-        {% endfor %}
-      </select>
-      <input type="checkbox" name="lock_iso" {{ 'checked' if lock_iso }}> Lock
-    </div>
-    <hr> <!-- Horizontal rule as a separator -->
+        <!-- ISO Selection -->
+        <div class="col-md-6">
+          <label for="iso" class="form-label">ISO:</label>
+          <select name="iso" id="iso" class="form-select">
+            {% for i in iso_values %}
+            <option value="{{ i }}" {{ 'selected' if i == iso }}>{{ i }}</option>
+            {% endfor %}
+          </select>
+          <input type="checkbox" name="lock_iso" {{ 'checked' if lock_iso }}> Lock
+        </div>
 
-    <button type="submit">Calculate</button>
+        <!-- Submission Button -->
+        <div class="col-12">
+          <button type="submit" class="btn btn-primary">Calculate</button>
+        </div>
+      </div>
 
-    <!-- Conditional outputs -->
-    {% if result %}
-      <h3>Result: {{ result_key }} = {{ result }}</h3>
-    {% elif warning %}
-      <h3 style="color: orange;">Warning: {{ warning }}</h3>
-    {% elif error %}
-      <h3 style="color: red;">{{ error }}</h3>
-    {% endif %}
-  </form>
+      <!-- Result Display -->
+      {% if result %}
+      <div class="alert alert-success mt-4" role="alert">
+        <strong>Result:</strong> {{ result_key }} = {{ result }}
+      </div>
+      {% elif warning %}
+      <div class="alert alert-warning mt-4" role="alert">
+        <strong>Warning:</strong> {{ warning }}
+      </div>
+      {% elif error %}
+      <div class="alert alert-danger mt-4" role="alert">
+        <strong>Error:</strong> {{ error }}
+      </div>
+      {% endif %}
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
 """
