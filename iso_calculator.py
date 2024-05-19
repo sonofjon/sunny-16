@@ -33,6 +33,9 @@ iso_values = [
 ]
 
 apertures = [1.4, 2, 2.8, 4, 5.6, 8, 11, 16, 22]
+aperture_labels = [f"f/{a}" for a in apertures]
+aperture_options = list(zip(apertures, aperture_labels))
+
 shutter_speeds = [
     1,
     1 / 2,
@@ -102,8 +105,8 @@ HTML_TEMPLATE = """
     <div>
       <label for="aperture">Aperture:</label>
       <select name="aperture">
-        {% for a in apertures %}
-          <option value="{{ a }}" {{ 'selected' if a == aperture }}>f/{{ a }}</option>
+        {% for a, label in aperture_options %}
+          <option value="{{ a }}" {{ 'selected' if a == aperture }}>{{ label }}</option>
         {% endfor %}
       </select>
       <input type="checkbox" name="lock_aperture" {{ 'checked' if lock_aperture }}> Lock
@@ -238,7 +241,7 @@ def calculate_variable():
     return render_template_string(
         HTML_TEMPLATE,
         **data,
-        apertures=apertures,
+        aperture_options=aperture_options,
         shutter_speed_options=shutter_speed_options,
         iso_values=iso_values,
         ev_options=ev_options,
