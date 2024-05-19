@@ -8,6 +8,9 @@ Dependencies:
 - Flask
 - Python's math module for calculations
 
+Author: Andreas jonsson
+Contact: ajdev8@gmail.com
+GitHub: https://github.com/sonofjon/sunny-16
 """
 
 import math
