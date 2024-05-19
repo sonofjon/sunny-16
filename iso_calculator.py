@@ -145,6 +145,17 @@ HTML_TEMPLATE = """
           </select>
         </div>
 
+        <!-- ISO Selection -->
+        <div class="col-md-6">
+          <label for="iso" class="form-label">ISO:</label>
+          <select name="iso" id="iso" class="form-select">
+            {% for i in iso_values %}
+            <option value="{{ i }}" {{ 'selected' if i == iso }}>{{ i }}</option>
+            {% endfor %}
+          </select>
+          <input type="checkbox" name="lock_iso" {{ 'checked' if lock_iso }}> Lock
+        </div>
+
         <!-- Aperture Selection -->
         <div class="col-md-6">
           <label for="aperture" class="form-label">Aperture:</label>
@@ -165,17 +176,6 @@ HTML_TEMPLATE = """
             {% endfor %}
           </select>
           <input type="checkbox" name="lock_shutterspeed" {{ 'checked' if lock_shutter_speed }}> Lock
-        </div>
-
-        <!-- ISO Selection -->
-        <div class="col-md-6">
-          <label for="iso" class="form-label">ISO:</label>
-          <select name="iso" id="iso" class="form-select">
-            {% for i in iso_values %}
-            <option value="{{ i }}" {{ 'selected' if i == iso }}>{{ i }}</option>
-            {% endfor %}
-          </select>
-          <input type="checkbox" name="lock_iso" {{ 'checked' if lock_iso }}> Lock
         </div>
 
         <!-- Submission Button -->
