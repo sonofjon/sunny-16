@@ -72,10 +72,33 @@ ev_options = [
 
 
 def find_nearest(possible_values, target_value):
+    """Find the closest value in a list to the given target value.
+
+    Args:
+    ----
+        possible_values (list): A list of possible numeric values.
+        target_value (float): The value to find the closest match to.
+
+    Returns:
+    -------
+        The value from possible_values that is closest to target_value.
+
+    """
     return min(possible_values, key=lambda x: abs(x - target_value))
 
 
 def to_fraction(shutter_speed):
+    """Convert a shutter speed number to a human-readable fraction string.
+
+    Args:
+    ----
+        shutter_speed (float): A numeric value representing the shutter speed.
+
+    Returns:
+    -------
+        A string representation of the shutter speed in the form of a fraction.
+
+    """
     index = shutter_speeds.index(shutter_speed)
     return shutter_speed_labels[index] if index >= 0 else "Unknown speed"
 
