@@ -212,6 +212,20 @@ HTML_TEMPLATE = """
 
 @app.route("/", methods=["GET", "POST"])
 def calculate_variable():
+    """Calculate the photography settings based on the Sunny 16 rule.
+
+    This route handles both GET and POST requests. On a GET request, it
+    renders the form with default settings. On a POST request, it computes
+    either the aperture, shutter speed, or ISO depending on which two
+    parameters are locked by the user. Errors are returned if input is
+    invalid or if the precise locking mechanism isn't followed.
+
+    Returns:
+    -------
+        Rendered HTML page with form inputs, and possibly calculation
+        results, warnings, or error messages.
+
+    """
     defaults = {
         "aperture": 16.0,
         "shutterspeed": 1 / 125,
