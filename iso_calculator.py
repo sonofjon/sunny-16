@@ -19,6 +19,7 @@ from flask import Flask, render_template_string, request
 
 app = Flask(__name__)
 
+# 1/3 stop ISO values
 iso_values = [
     100,
     125,
@@ -46,31 +47,90 @@ iso_values = [
     20000,
     25600,
 ]
+iso_labels = [f"{i}" for i in iso_values]
+# iso_options = list(zip(iso_values, iso_labels))
 
-apertures = [1.4, 2, 2.8, 4, 5.6, 8, 11, 16, 22]
+# 1/3 stop apertures
+apertures = [
+    1.4,
+    1.6,
+    1.8,
+    2,
+    2.2,
+    2.5,
+    2.8,
+    3.2,
+    3.5,
+    4,
+    4.5,
+    5,
+    5.6,
+    6.3,
+    7.1,
+    8,
+    9,
+    10,
+    11,
+    13,
+    14,
+    16,
+    18,
+    20,
+    22,
+]
 aperture_labels = [f"f/{a}" for a in apertures]
-aperture_options = list(zip(apertures, aperture_labels))
+# aperture_options = list(zip(apertures, aperture_labels))
 
+# 1/3 stop shutter speeds
 shutter_speeds = [
     1,
+    1 / 1.3,
+    1 / 1.6,
     1 / 2,
+    1 / 2.5,
+    1 / 3,
     1 / 4,
+    1 / 5,
+    1 / 6,
     1 / 8,
+    1 / 10,
+    1 / 13,
     1 / 15,
+    1 / 20,
+    1 / 25,
     1 / 30,
+    1 / 40,
+    1 / 50,
     1 / 60,
+    1 / 80,
+    1 / 100,
     1 / 125,
+    1 / 160,
+    1 / 200,
     1 / 250,
+    1 / 320,
+    1 / 400,
     1 / 500,
+    1 / 640,
+    1 / 800,
     1 / 1000,
+    1 / 1250,
+    1 / 1600,
     1 / 2000,
+    1 / 2500,
+    1 / 3200,
     1 / 4000,
+    1 / 5000,
+    1 / 6400,
     1 / 8000,
 ]
 shutter_speed_labels = [
-    "1s" if s == 1 else f"1/{1/s:.0f}s" for s in shutter_speeds
+    "1" if s == 1
+    else f"1/{1/s:.2f}".rstrip("0").rstrip(".") if int(1 / s) != 1 / s
+    else f"1/{int(1/s)}"
+    for s in shutter_speeds
 ]
-shutter_speed_options = list(zip(shutter_speeds, shutter_speed_labels))
+# shutter_speed_options = list(zip(shutter_speeds, shutter_speed_labels))
 
 light_conditions = {
     16: "Snow/Sand",
@@ -138,6 +198,15 @@ HTML_TEMPLATE = """
 
     <form method="post" class="needs-validation" novalidate>
       <div class="row g-3">
+        <!-- Stop Increment Choice -->
+        <div class="col-md-12">
+          <label for="stop_increment" class="form-label">Choose Stop Increment:</label>
+          <select name="stop_increment" id="stop_increment" class="form-select" onchange="this.form.submit()">
+            <option value="full" {% if stop_choice == 'full' %}selected{% endif %}>Full Stop</option>
+            <option value="third" {% if stop_choice == 'third' %}selected{% endif %}>1/3 Stop</option>
+          </select>
+        </div>
+
         <!-- Exposure Value Selection -->
         <div class="col-md-6">
           <label for="ev" class="form-label">Exposure Value:</label>
@@ -152,8 +221,8 @@ HTML_TEMPLATE = """
         <div class="col-md-6">
           <label for="iso" class="form-label">ISO:</label>
           <select name="iso" id="iso" class="form-select">
-            {% for i in iso_values %}
-            <option value="{{ i }}" {{ 'selected' if i == iso }}>{{ i }}</option>
+            {% for i, label in iso_options %}
+            <option value="{{ i }}" {{ 'selected' if i == iso }}>{{ label }}</option>
             {% endfor %}
           </select>
           <input type="checkbox" name="lock_iso" {{ 'checked' if lock_iso }}> Lock
@@ -226,6 +295,20 @@ def calculate_variable():
         results, warnings, or error messages.
 
     """
+    stop_choice = request.form.get("stop_increment", "full")
+    if stop_choice == "full":
+        iso_options = list(zip(iso_values[::3], iso_labels[::3]))
+        aperture_options = list(zip(apertures[::3], aperture_labels[::3]))
+        shutter_speed_options = list(
+            zip(shutter_speeds[::3], shutter_speed_labels[::3])
+        )
+    else:
+        iso_options = list(zip(iso_values, iso_labels))
+        aperture_options = list(zip(apertures, aperture_labels))
+        shutter_speed_options = list(
+            zip(shutter_speeds, shutter_speed_labels)
+        )
+
     defaults = {
         "aperture": 16.0,
         "shutterspeed": 1 / 125,
@@ -314,9 +397,10 @@ def calculate_variable():
     return render_template_string(
         HTML_TEMPLATE,
         **data,
+        stop_choice=stop_choice,
         aperture_options=aperture_options,
         shutter_speed_options=shutter_speed_options,
-        iso_values=iso_values,
+        iso_options=iso_options,
         ev_options=ev_options,
     )
 
