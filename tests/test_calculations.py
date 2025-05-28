@@ -25,6 +25,7 @@ class TestCalculateAperture(unittest.TestCase):
         self.assertTrue(success)
         self.assertIsInstance(result, float)
         self.assertGreater(result, 0)
+        self.assertEqual(result, 16.0)
 
     def test_calculate_aperture_out_of_range_low(self):
         """Test aperture calculation with result below minimum."""
@@ -58,7 +59,8 @@ class TestCalculateShutterSpeed(unittest.TestCase):
         success, result = calculate_shutter_speed(data)
         self.assertTrue(success)
         self.assertIsInstance(result, float)
-        self.assertAlmostEqual(result, 1/500.0, places=5)
+        self.assertGreater(result, 0)
+        self.assertAlmostEqual(result, 1 / 500.0, places=5)
 
     def test_calculate_shutter_speed_out_of_range_fast(self):
         """Test shutter speed calculation with result too fast."""
@@ -93,6 +95,7 @@ class TestCalculateISO(unittest.TestCase):
         self.assertTrue(success)
         self.assertIsInstance(result, int)
         self.assertGreater(result, 0)
+        self.assertEqual(result, 100)
 
     def test_calculate_iso_out_of_range_low(self):
         """Test ISO calculation with result below minimum."""
