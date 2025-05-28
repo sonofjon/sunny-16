@@ -44,7 +44,7 @@ def to_fraction(shutter_speed):
     """
     index = SHUTTER_SPEEDS.index(shutter_speed)
     shutter_speed_labels = generate_shutter_speed_labels()
-    return shutter_speed_labels[index] if index >= 0 else "Unknown speed"
+    return shutter_speed_labels[index]
 
 
 def generate_iso_labels():
