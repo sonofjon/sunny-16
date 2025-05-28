@@ -98,6 +98,7 @@ class TestLabelGeneration(unittest.TestCase):
         """Test aperture label generation."""
         labels = generate_aperture_labels()
         self.assertIsInstance(labels, list)
+        self.assertTrue(all(isinstance(label, str) for label in labels))
         self.assertTrue(all(label.startswith("f/") for label in labels))
         self.assertIn("f/1.4", labels)
         self.assertIn("f/8", labels)
