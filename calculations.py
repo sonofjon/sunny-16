@@ -18,9 +18,10 @@ def calculate_aperture(data):
         data (dict): Form data containing ISO, EV, and shutter speed.
 
     Returns:
-        tuple: (success, result_or_warning) where success is bool and
-            result_or_warning is either the calculated value or warning
-            message.
+        tuple (bool, float or str): (success, result_or_warning) where
+            success is True if calculation is within range, False otherwise.
+            result_or_warning is the calculated aperture (float) or a
+            warning message (str).
     """
     exact_aperture = math.sqrt(
         (data["iso"] / 100.0) * (2 ** data["ev"]) * data["shutterspeed"]
@@ -39,9 +40,10 @@ def calculate_shutter_speed(data):
         data (dict): Form data containing aperture, ISO, and EV.
 
     Returns:
-        tuple: (success, result_or_warning) where success is bool and
-            result_or_warning is either the calculated value or warning
-            message.
+        tuple (bool, str): (success, result_or_warning) where
+            success is True if calculation is within range, False otherwise.
+            result_or_warning is the calculated shutter speed (str) or a
+            warning message (str).
     """
     exact_shutter_speed = (data["aperture"] ** 2) / (
         (2 ** data["ev"]) * (data["iso"] / 100.0)
@@ -63,9 +65,10 @@ def calculate_iso(data):
         data (dict): Form data containing aperture, shutter speed, and EV.
 
     Returns:
-        tuple: (success, result_or_warning) where success is bool and
-            result_or_warning is either the calculated value or warning
-            message.
+        tuple (bool, int or str): (success, result_or_warning) where
+            success is True if calculation is within range, False otherwise.
+            result_or_warning is the calculated ISO (int) or a
+            warning message (str).
     """
     exact_iso = (
         100.0
