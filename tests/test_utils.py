@@ -88,6 +88,7 @@ class TestLabelGeneration(unittest.TestCase):
         labels = generate_iso_labels()
         self.assertIsInstance(labels, list)
         self.assertTrue(all(isinstance(label, str) for label in labels))
+        self.assertTrue(all(label.isdigit() for label in labels))
         self.assertIn("100", labels)
         self.assertIn("400", labels)
         self.assertIn("1600", labels)
@@ -106,8 +107,10 @@ class TestLabelGeneration(unittest.TestCase):
         labels = generate_shutter_speed_labels()
         self.assertIsInstance(labels, list)
         self.assertTrue(all(isinstance(label, str) for label in labels))
+        for label in labels:
+            # Should be either "1" or start with "1/"
+            self.assertTrue(label == "1" or label.startswith("1/"))
         self.assertIn("1", labels)  # For 1 second
-        # Should contain fraction format
         self.assertTrue(any("1/" in label for label in labels))
         self.assertIn("1/125", labels)
         self.assertIn("1/250", labels)
@@ -158,10 +161,11 @@ class TestGetFilteredOptions(unittest.TestCase):
         self.assertGreater(len(aperture_opts), 0)
         self.assertGreater(len(shutter_opts), 0)
 
-        # Check that tuples contain expected types
+        # Check that tuples contain expected types and formats
         for value, label in iso_opts:
             self.assertIsInstance(value, int)
             self.assertIsInstance(label, str)
+            self.assertTrue(label.isdigit())
 
         for value, label in aperture_opts:
             self.assertIsInstance(value, float)
@@ -171,6 +175,7 @@ class TestGetFilteredOptions(unittest.TestCase):
         for value, label in shutter_opts:
             self.assertIsInstance(value, float)
             self.assertIsInstance(label, str)
+            self.assertTrue(label == "1" or label.startswith("1/"))
 
     def test_get_filtered_options_invalid_choice(self):
         """Test filtering with invalid stop choice defaults to third stops."""
