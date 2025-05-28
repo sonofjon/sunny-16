@@ -15,7 +15,7 @@ GitHub: https://github.com/sonofjon/sunny-16
 
 import math
 
-from flask import Flask, render_template_string, request
+from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
@@ -177,107 +177,6 @@ def to_fraction(shutter_speed):
     return shutter_speed_labels[index] if index >= 0 else "Unknown speed"
 
 
-HTML_TEMPLATE = """
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Sunny 16 Calculator</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    .container {
-      margin-top: 20px;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1 class="text-center mb-4">Sunny 16 Calculator</h1>
-
-    <form method="post" class="needs-validation" novalidate>
-      <div class="row g-3">
-        <!-- Stop Increment Choice -->
-        <div class="col-md-12">
-          <label for="stop_increment" class="form-label">Choose Stop Increment:</label>
-          <select name="stop_increment" id="stop_increment" class="form-select" onchange="this.form.submit()">
-            <option value="full" {% if stop_choice == 'full' %}selected{% endif %}>Full Stop</option>
-            <option value="third" {% if stop_choice == 'third' %}selected{% endif %}>1/3 Stop</option>
-          </select>
-        </div>
-
-        <!-- Exposure Value Selection -->
-        <div class="col-md-6">
-          <label for="ev" class="form-label">Exposure Value:</label>
-          <select name="ev" id="ev" class="form-select" required>
-            {% for value, description in ev_options %}
-            <option value="{{ value }}" {{ 'selected' if value == ev }}>{{ description }}</option>
-            {% endfor %}
-          </select>
-        </div>
-
-        <!-- ISO Selection -->
-        <div class="col-md-6">
-          <label for="iso" class="form-label">ISO:</label>
-          <select name="iso" id="iso" class="form-select">
-            {% for i, label in iso_options %}
-            <option value="{{ i }}" {{ 'selected' if i == iso }}>{{ label }}</option>
-            {% endfor %}
-          </select>
-          <input type="checkbox" name="lock_iso" {{ 'checked' if lock_iso }}> Lock
-        </div>
-
-        <!-- Aperture Selection -->
-        <div class="col-md-6">
-          <label for="aperture" class="form-label">Aperture:</label>
-          <select name="aperture" id="aperture" class="form-select">
-            {% for a, label in aperture_options %}
-            <option value="{{ a }}" {{ 'selected' if a == aperture }}>{{ label }}</option>
-            {% endfor %}
-          </select>
-          <input type="checkbox" name="lock_aperture" {{ 'checked' if lock_aperture }}> Lock
-        </div>
-
-        <!-- Shutter Speed Selection -->
-        <div class="col-md-6">
-          <label for="shutterspeed" class="form-label">Shutter Speed:</label>
-          <select name="shutterspeed" id="shutterspeed" class="form-select">
-            {% for speed, label in shutter_speed_options %}
-            <option value="{{ speed }}" {{ 'selected' if speed == shutterspeed }}>{{ label }}</option>
-            {% endfor %}
-          </select>
-          <input type="checkbox" name="lock_shutterspeed" {{ 'checked' if lock_shutter_speed }}> Lock
-        </div>
-
-        <!-- Submission Button -->
-        <div class="col-12">
-          <button type="submit" class="btn btn-primary">Calculate</button>
-        </div>
-      </div>
-
-      <!-- Result Display -->
-      {% if result %}
-      <div class="alert alert-success mt-4" role="alert">
-        <strong>Result:</strong> {{ result_key }} = {{ result }}
-      </div>
-      {% elif warning %}
-      <div class="alert alert-warning mt-4" role="alert">
-        <strong>Warning:</strong> {{ warning }}
-      </div>
-      {% elif error %}
-      <div class="alert alert-danger mt-4" role="alert">
-        <strong>Error:</strong> {{ error }}
-      </div>
-      {% endif %}
-    </form>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
-"""
-
-
 @app.route("/", methods=["GET", "POST"])
 def calculate_variable():
     """Calculate the photography settings based on the Sunny 16 rule.
@@ -390,8 +289,8 @@ def calculate_variable():
             except ValueError as e:
                 data["error"] = f"Invalid input: {e}"
 
-    return render_template_string(
-        HTML_TEMPLATE,
+    return render_template(
+        "calculator.html",
         **data,
         stop_choice=stop_choice,
         aperture_options=aperture_options,
