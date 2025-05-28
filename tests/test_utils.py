@@ -200,9 +200,7 @@ class TestExtractFormData(unittest.TestCase):
             "lock_aperture": "on",
             "lock_shutterspeed": "on",
         }
-        mock_request.form.get = (
-            lambda key, default=None: mock_request.form.get(key, default)
-        )
+        mock_request.form.get = mock_request.form.get
 
         defaults = {
             "aperture": 16.0,
@@ -225,7 +223,7 @@ class TestExtractFormData(unittest.TestCase):
         """Test extraction using default values."""
         mock_request = Mock()
         mock_request.form = {}
-        mock_request.form.get = lambda key, default=None: default
+        mock_request.form.get = mock_request.form.get
 
         defaults = {
             "aperture": 16.0,
@@ -248,9 +246,7 @@ class TestExtractFormData(unittest.TestCase):
         """Test extraction with some locks checked."""
         mock_request = Mock()
         mock_request.form = {"iso": "800", "lock_iso": "on"}
-        mock_request.form.get = (
-            lambda key, default=None: mock_request.form.get(key, default)
-        )
+        mock_request.form.get = mock_request.form.get
 
         defaults = {
             "aperture": 8.0,
@@ -270,7 +266,7 @@ class TestExtractFormData(unittest.TestCase):
         """Test that result fields are properly initialized."""
         mock_request = Mock()
         mock_request.form = {}
-        mock_request.form.get = lambda key, default=None: default
+        mock_request.form.get = mock_request.form.get
 
         defaults = {
             "aperture": 8.0,

@@ -224,10 +224,11 @@ class TestFlaskRoutes(unittest.TestCase):
         with self.app.test_request_context("/", method="GET"):
             from flask import request
 
-            result = sunny16_calculator()
+            sunny16_calculator()
 
             mock_prepare.assert_called_once_with(request)
-            mock_process.assert_not_called()  # Should not process calculation on GET
+            # Should not process calculation on GET
+            mock_process.assert_not_called()
 
     @patch("app.prepare_form_options")
     @patch("app.process_calculation")
@@ -247,7 +248,7 @@ class TestFlaskRoutes(unittest.TestCase):
         with self.app.test_request_context("/", method="POST"):
             from flask import request
 
-            result = sunny16_calculator()
+            sunny16_calculator()
 
             mock_prepare.assert_called_once_with(request)
             mock_process.assert_called_once()

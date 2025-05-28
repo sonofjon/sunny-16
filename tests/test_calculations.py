@@ -178,7 +178,7 @@ class TestPerformCalculation(unittest.TestCase):
     @patch(
         "calculations.calculate_aperture", side_effect=ValueError("Test error")
     )
-    def test_perform_calculation_handles_value_error(self, mock_calc):
+    def test_perform_calculation_handles_value_error(self, _):
         """Test that ValueError is properly handled."""
         data = {
             "iso": 100,

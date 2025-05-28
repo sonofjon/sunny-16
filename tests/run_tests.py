@@ -35,12 +35,12 @@ if __name__ == "__main__":
 
     if result.failures:
         print("\nFailures:")
-        for test, traceback in result.failures:
+        for test, _ in result.failures:
             print(f"- {test}")
 
     if result.errors:
         print("\nErrors:")
-        for test, traceback in result.errors:
+        for test, _ in result.errors:
             print(f"- {test}")
 
     # Exit with appropriate code
