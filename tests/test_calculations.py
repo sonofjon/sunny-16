@@ -55,12 +55,12 @@ class TestCalculateShutterSpeed(unittest.TestCase):
 
     def test_calculate_shutter_speed_valid_input(self):
         """Test shutter speed calculation with valid inputs."""
-        data = {"aperture": 8.0, "iso": 100, "ev": 15}
+        data = {"aperture": 16, "iso": 100, "ev": 15}
         success, result = calculate_shutter_speed(data)
         self.assertTrue(success)
         self.assertIsInstance(result, float)
         self.assertGreater(result, 0)
-        self.assertAlmostEqual(result, 1 / 500.0, places=5)
+        self.assertAlmostEqual(result, 1 / 125, places=5)
 
     def test_calculate_shutter_speed_out_of_range_fast(self):
         """Test shutter speed calculation with result too fast."""
@@ -78,7 +78,7 @@ class TestCalculateShutterSpeed(unittest.TestCase):
         data = {
             "aperture": 22,  # Narrow aperture
             "iso": 100,  # Low ISO
-            "ev": 11,  # Low light
+            "ev": 1,  # Very low light
         }
         success, result = calculate_shutter_speed(data)
         self.assertFalse(success)
@@ -90,12 +90,12 @@ class TestCalculateISO(unittest.TestCase):
 
     def test_calculate_iso_valid_input(self):
         """Test ISO calculation with valid inputs."""
-        data = {"aperture": 8.0, "shutterspeed": 1 / 125, "ev": 15}
+        data = {"aperture": 16, "shutterspeed": 1 / 125, "ev": 11}
         success, result = calculate_iso(data)
         self.assertTrue(success)
         self.assertIsInstance(result, int)
         self.assertGreater(result, 0)
-        self.assertEqual(result, 100)
+        self.assertEqual(result, 1600)
 
     def test_calculate_iso_out_of_range_low(self):
         """Test ISO calculation with result below minimum."""
@@ -140,7 +140,7 @@ class TestPerformCalculation(unittest.TestCase):
     def test_perform_calculation_shutter_speed_unlocked(self):
         """Test calculation when shutter speed is unlocked."""
         data = {
-            "aperture": 8.0,
+            "aperture": 16,
             "iso": 100,
             "ev": 15,
             "lock_aperture": True,
@@ -154,9 +154,9 @@ class TestPerformCalculation(unittest.TestCase):
     def test_perform_calculation_iso_unlocked(self):
         """Test calculation when ISO is unlocked."""
         data = {
-            "aperture": 8.0,
+            "aperture": 16,
             "shutterspeed": 1 / 125,
-            "ev": 15,
+            "ev": 11,
             "lock_aperture": True,
             "lock_shutter_speed": True,
             "lock_iso": False,
