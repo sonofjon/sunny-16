@@ -150,19 +150,46 @@ class TestGetFilteredOptions(unittest.TestCase):
         self.assertTrue(all(len(opt) == 2 for opt in shutter_opts))
 
         # Full stops should have fewer options than third stops
-        iso_all, aperture_all, shutter_all = get_filtered_options("third")
-        self.assertLess(len(iso_opts), len(iso_all))
-        self.assertLess(len(aperture_opts), len(aperture_all))
-        self.assertLess(len(shutter_opts), len(shutter_all))
+        iso_third, aperture_third, shutter_third = get_filtered_options("third")
+        self.assertLess(len(iso_opts), len(iso_third))
+        self.assertLess(len(aperture_opts), len(aperture_third))
+        self.assertLess(len(shutter_opts), len(shutter_third))
+
+        # Check that tuples contain expected types and formats
+        for value, label in iso_opts:
+            self.assertIsInstance(value, int)
+            self.assertIsInstance(label, str)
+            self.assertTrue(label.isdigit())
+
+        for value, label in aperture_opts:
+            self.assertIsInstance(value, float)
+            self.assertIsInstance(label, str)
+            self.assertTrue(label.startswith("f/"))
+
+        for value, label in shutter_opts:
+            self.assertIsInstance(value, float)
+            self.assertIsInstance(label, str)
+            self.assertTrue(label == "1" or label.startswith("1/"))
 
     def test_get_filtered_options_third_stops(self):
         """Test filtering for third stops."""
         iso_opts, aperture_opts, shutter_opts = get_filtered_options("third")
 
-        # Should return all available options
-        self.assertGreater(len(iso_opts), 0)
-        self.assertGreater(len(aperture_opts), 0)
-        self.assertGreater(len(shutter_opts), 0)
+        # Should return tuples of (value, label)
+        self.assertTrue(all(isinstance(opt, tuple) for opt in iso_opts))
+        self.assertTrue(all(isinstance(opt, tuple) for opt in aperture_opts))
+        self.assertTrue(all(isinstance(opt, tuple) for opt in shutter_opts))
+
+        # Each tuple should have exactly 2 elements
+        self.assertTrue(all(len(opt) == 2 for opt in iso_opts))
+        self.assertTrue(all(len(opt) == 2 for opt in aperture_opts))
+        self.assertTrue(all(len(opt) == 2 for opt in shutter_opts))
+
+        # Third stops should have more options than full stops
+        iso_full, aperture_full, shutter_full = get_filtered_options("full")
+        self.assertGreater(len(iso_opts), len(iso_full))
+        self.assertGreater(len(aperture_opts), len(aperture_full))
+        self.assertGreater(len(shutter_opts), len(shutter_full))
 
         # Check that tuples contain expected types and formats
         for value, label in iso_opts:
