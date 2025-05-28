@@ -172,7 +172,6 @@ def to_fraction(shutter_speed):
     Returns:
     -------
         A string representation of the shutter speed in the form of a fraction.
-
     """
     index = shutter_speeds.index(shutter_speed)
     return shutter_speed_labels[index] if index >= 0 else "Unknown speed"
@@ -293,7 +292,6 @@ def calculate_variable():
     -------
         Rendered HTML page with form inputs, and possibly calculation
         results, warnings, or error messages.
-
     """
     stop_choice = request.form.get("stop_increment", "full")
     if stop_choice == "full":
@@ -305,9 +303,7 @@ def calculate_variable():
     else:
         iso_options = list(zip(iso_values, iso_labels))
         aperture_options = list(zip(apertures, aperture_labels))
-        shutter_speed_options = list(
-            zip(shutter_speeds, shutter_speed_labels)
-        )
+        shutter_speed_options = list(zip(shutter_speeds, shutter_speed_labels))
 
     defaults = {
         "aperture": 16.0,
