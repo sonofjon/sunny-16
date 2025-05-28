@@ -147,19 +147,19 @@ ev_options = [
 
 
 def find_nearest(possible_values, target_value):
-    """Find the closest value in a list to the given target value.
+    """Find the closest value based on log₂-scale (stop) difference.
 
     Args:
-    ----
         possible_values (list): A list of possible numeric values.
         target_value (float): The value to find the closest match to.
 
     Returns:
-    -------
-        The value from possible_values that is closest to target_value.
-
+        A value from possible_values whose log₂‐difference to target_value is minimal.
     """
-    return min(possible_values, key=lambda x: abs(x - target_value))
+    return min(
+        possible_values,
+        key=lambda x: abs(math.log2(x) - math.log2(target_value))
+    )
 
 
 def to_fraction(shutter_speed):
