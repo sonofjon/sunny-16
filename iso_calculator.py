@@ -132,6 +132,50 @@ def perform_calculation(data):
     return data
 
 
+def process_request_data(request):
+    """Process incoming request and generate form options.
+
+    Args:
+        request: Flask request object.
+
+    Returns:
+        tuple: (data, stop_choice, options_dict) containing extracted form
+            data, stop increment choice, and all dropdown options.
+    """
+    stop_choice = request.form.get("stop_increment", "full")
+    iso_options, aperture_options, shutter_speed_options = (
+        get_filtered_options(stop_choice)
+    )
+    ev_options = generate_ev_options()
+    data = extract_form_data(request, DEFAULTS)
+
+    options = {
+        'aperture_options': aperture_options,
+        'shutter_speed_options': shutter_speed_options,
+        'iso_options': iso_options,
+        'ev_options': ev_options
+    }
+
+    return data, stop_choice, options
+
+
+def handle_calculation_request(data):
+    """Handle POST request calculation logic.
+
+    Args:
+        data (dict): Form data containing all variables and lock states.
+
+    Returns:
+        dict: Updated data with calculation results or error messages.
+    """
+    error = validate_locks(data)
+    if error:
+        data["error"] = error
+        return data
+
+    return perform_calculation(data)
+
+
 @app.route("/", methods=["GET", "POST"])
 def calculate_variable():
     """Calculate the photography settings based on the Sunny 16 rule.
@@ -146,29 +190,16 @@ def calculate_variable():
         str: Rendered HTML page with form inputs, and possibly calculation
             results, warnings, or error messages.
     """
-    stop_choice = request.form.get("stop_increment", "full")
-    iso_options, aperture_options, shutter_speed_options = (
-        get_filtered_options(stop_choice)
-    )
-    ev_options = generate_ev_options()
-
-    data = extract_form_data(request, DEFAULTS)
+    data, stop_choice, options = process_request_data(request)
 
     if request.method == "POST":
-        error = validate_locks(data)
-        if error:
-            data["error"] = error
-        else:
-            data = perform_calculation(data)
+        data = handle_calculation_request(data)
 
     return render_template(
         "calculator.html",
         **data,
         stop_choice=stop_choice,
-        aperture_options=aperture_options,
-        shutter_speed_options=shutter_speed_options,
-        iso_options=iso_options,
-        ev_options=ev_options,
+        **options
     )
 
 
