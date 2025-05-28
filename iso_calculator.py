@@ -177,6 +177,48 @@ def to_fraction(shutter_speed):
     return shutter_speed_labels[index] if index >= 0 else "Unknown speed"
 
 
+def compute_aperture(iso, ev, shutterspeed):
+    """Compute the aperture (f-stop) using the Sunny 16 formula.
+
+    Args:
+        iso (int): ISO sensitivity.
+        ev (int): Exposure value.
+        shutterspeed (float): Shutter speed in seconds.
+
+    Returns:
+        float: The exact (unrounded) aperture value.
+    """
+    return math.sqrt((iso / 100.0) * (2 ** ev) * shutterspeed)
+
+
+def compute_shutter_speed(aperture, iso, ev):
+    """Compute the shutter speed using the Sunny 16 formula.
+
+    Args:
+        aperture (float): Aperture (f-stop).
+        iso (int): ISO sensitivity.
+        ev (int): Exposure value.
+
+    Returns:
+        float: The exact (unrounded) shutter speed in seconds.
+    """
+    return (aperture ** 2) / ((2 ** ev) * (iso / 100.0))
+
+
+def compute_iso(aperture, shutterspeed, ev):
+    """Compute the ISO using the Sunny 16 formula.
+
+    Args:
+        aperture (float): Aperture (f-stop).
+        shutterspeed (float): Shutter speed in seconds.
+        ev (int): Exposure value.
+
+    Returns:
+        float: The exact (unrounded) ISO value.
+    """
+    return 100.0 * ((aperture ** 2) / shutterspeed) / (2 ** ev)
+
+
 @app.route("/", methods=["GET", "POST"])
 def calculate_variable():
     """Calculate the photography settings based on the Sunny 16 rule.
@@ -240,51 +282,34 @@ def calculate_variable():
         else:
             try:
                 if not data["lock_aperture"]:
-                    calculated_aperture = math.sqrt(
-                        (data["iso"] / 100)
-                        * (2 ** data["ev"])
-                        * data["shutterspeed"]
+                    exact_a = compute_aperture(
+                        data["iso"], data["ev"], data["shutterspeed"]
                     )
-                    if calculated_aperture < min(
-                        apertures
-                    ) or calculated_aperture > max(apertures):
-                        data["warning"] = (
-                            "Calculated aperture is out of range."
-                        )
+                    if exact_a < min(apertures) or exact_a > max(apertures):
+                        data["warning"] = "Calculated aperture is out of range."
                     else:
-                        data["result"] = find_nearest(
-                            apertures, calculated_aperture
-                        )
+                        data["result"] = find_nearest(apertures, exact_a)
                         data["result_key"] = "Aperture"
+
                 elif not data["lock_shutter_speed"]:
-                    calculated_speed = (data["aperture"] ** 2) / (
-                        (2 ** data["ev"]) * (data["iso"] / 100)
+                    exact_s = compute_shutter_speed(
+                        data["aperture"], data["iso"], data["ev"]
                     )
-                    if calculated_speed < min(
-                        shutter_speeds
-                    ) or calculated_speed > max(shutter_speeds):
-                        data["warning"] = (
-                            "Calculated shutter speed is out of range."
-                        )
+                    if exact_s < min(shutter_speeds) or exact_s > max(shutter_speeds):
+                        data["warning"] = "Calculated shutter speed is out of range."
                     else:
-                        data["result"] = to_fraction(
-                            find_nearest(shutter_speeds, calculated_speed)
-                        )
+                        nearest = find_nearest(shutter_speeds, exact_s)
+                        data["result"] = to_fraction(nearest)
                         data["result_key"] = "Shutter Speed"
+
                 elif not data["lock_iso"]:
-                    calculated_iso = (
-                        100
-                        * ((data["aperture"] ** 2) / data["shutterspeed"])
-                        / (2 ** data["ev"])
+                    exact_i = compute_iso(
+                        data["aperture"], data["shutterspeed"], data["ev"]
                     )
-                    if calculated_iso < min(
-                        iso_values
-                    ) or calculated_iso > max(iso_values):
+                    if exact_i < min(iso_values) or exact_i > max(iso_values):
                         data["warning"] = "Calculated ISO is out of range."
                     else:
-                        data["result"] = find_nearest(
-                            iso_values, calculated_iso
-                        )
+                        data["result"] = find_nearest(iso_values, exact_i)
                         data["result_key"] = "ISO"
             except ValueError as e:
                 data["error"] = f"Invalid input: {e}"
