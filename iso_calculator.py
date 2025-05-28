@@ -13,82 +13,123 @@ import math
 
 from flask import Flask, render_template, request
 
-app = Flask(__name__)
 from config import APERTURES, DEFAULTS, ISO_VALUES, SHUTTER_SPEEDS
+from utils import (
+    extract_form_data,
+    find_nearest,
+    generate_ev_options,
+    get_filtered_options,
+    to_fraction,
+    validate_locks,
+)
+
+app = Flask(__name__)
 
 
-
-def find_nearest(possible_values, target_value):
-    """Find the closest value based on log₂-scale (stop) difference.
+def calculate_aperture(data):
+    """Calculate aperture.
 
     Args:
-        possible_values (list): A list of possible numeric values.
-        target_value (float): The value to find the closest match to.
+        data (dict): Form data containing ISO, EV, and shutter speed.
 
     Returns:
-        A value from possible_values whose log₂‐difference to target_value is minimal.
+        tuple: (success, result_or_warning) where success is bool and
+            result_or_warning is either the calculated value or warning
+            message.
     """
-    return min(
-        possible_values,
-        key=lambda x: abs(math.log2(x) - math.log2(target_value))
+    exact_a = math.sqrt(
+        (data["iso"] / 100.0) * (2 ** data["ev"]) * data["shutterspeed"]
     )
+    if exact_a < min(APERTURES) or exact_a > max(APERTURES):
+        return False, "Calculated aperture is out of range."
+
+    result = find_nearest(APERTURES, exact_a)
+    return True, result
 
 
-def to_fraction(shutter_speed):
-    """Convert a shutter speed number to a human-readable fraction string.
-
-    Args:
-    ----
-        shutter_speed (float): A numeric value representing the shutter speed.
-
-    Returns:
-    -------
-        A string representation of the shutter speed in the form of a fraction.
-    """
-    index = shutter_speeds.index(shutter_speed)
-    return shutter_speed_labels[index] if index >= 0 else "Unknown speed"
-
-
-def compute_aperture(iso, ev, shutterspeed):
-    """Compute the aperture (f-stop) using the Sunny 16 formula.
+def calculate_shutter_speed(data):
+    """Calculate shutter speed.
 
     Args:
-        iso (int): ISO sensitivity.
-        ev (int): Exposure value.
-        shutterspeed (float): Shutter speed in seconds.
+        data (dict): Form data containing aperture, ISO, and EV.
 
     Returns:
-        float: The exact (unrounded) aperture value.
+        tuple: (success, result_or_warning) where success is bool and
+            result_or_warning is either the calculated value or warning
+            message.
     """
-    return math.sqrt((iso / 100.0) * (2 ** ev) * shutterspeed)
+    exact_s = (data["aperture"] ** 2) / (
+        (2 ** data["ev"]) * (data["iso"] / 100.0)
+    )
+    if exact_s < min(SHUTTER_SPEEDS) or exact_s > max(SHUTTER_SPEEDS):
+        return False, "Calculated shutter speed is out of range."
+
+    nearest = find_nearest(SHUTTER_SPEEDS, exact_s)
+    result = to_fraction(nearest)
+    return True, result
 
 
-def compute_shutter_speed(aperture, iso, ev):
-    """Compute the shutter speed using the Sunny 16 formula.
+def calculate_iso(data):
+    """Calculate ISO.
 
     Args:
-        aperture (float): Aperture (f-stop).
-        iso (int): ISO sensitivity.
-        ev (int): Exposure value.
+        data (dict): Form data containing aperture, shutter speed, and EV.
 
     Returns:
-        float: The exact (unrounded) shutter speed in seconds.
+        tuple: (success, result_or_warning) where success is bool and
+            result_or_warning is either the calculated value or warning
+            message.
     """
-    return (aperture ** 2) / ((2 ** ev) * (iso / 100.0))
+    exact_i = (
+        100.0
+        * ((data["aperture"] ** 2) / data["shutterspeed"])
+        / (2 ** data["ev"])
+    )
+    if exact_i < min(ISO_VALUES) or exact_i > max(ISO_VALUES):
+        return False, "Calculated ISO is out of range."
+
+    result = find_nearest(ISO_VALUES, exact_i)
+    return True, result
 
 
-def compute_iso(aperture, shutterspeed, ev):
-    """Compute the ISO using the Sunny 16 formula.
+def perform_calculation(data):
+    """Perform the appropriate calculation based on which variables are locked.
 
     Args:
-        aperture (float): Aperture (f-stop).
-        shutterspeed (float): Shutter speed in seconds.
-        ev (int): Exposure value.
+        data (dict): Form data containing all variables and lock states.
 
     Returns:
-        float: The exact (unrounded) ISO value.
+        dict: Updated data with calculation results.
     """
-    return 100.0 * ((aperture ** 2) / shutterspeed) / (2 ** ev)
+    try:
+        if not data["lock_aperture"]:
+            success, result = calculate_aperture(data)
+            if success:
+                data["result"] = result
+                data["result_key"] = "Aperture"
+            else:
+                data["warning"] = result
+
+        elif not data["lock_shutter_speed"]:
+            success, result = calculate_shutter_speed(data)
+            if success:
+                data["result"] = result
+                data["result_key"] = "Shutter Speed"
+            else:
+                data["warning"] = result
+
+        elif not data["lock_iso"]:
+            success, result = calculate_iso(data)
+            if success:
+                data["result"] = result
+                data["result_key"] = "ISO"
+            else:
+                data["warning"] = result
+
+    except ValueError as e:
+        data["error"] = f"Invalid input: {e}"
+
+    return data
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -102,89 +143,23 @@ def calculate_variable():
     invalid or if the precise locking mechanism isn't followed.
 
     Returns:
-    -------
-        Rendered HTML page with form inputs, and possibly calculation
-        results, warnings, or error messages.
+        str: Rendered HTML page with form inputs, and possibly calculation
+            results, warnings, or error messages.
     """
     stop_choice = request.form.get("stop_increment", "full")
-    if stop_choice == "full":
-        iso_options = list(zip(iso_values[::3], iso_labels[::3]))
-        aperture_options = list(zip(apertures[::3], aperture_labels[::3]))
-        shutter_speed_options = list(
-            zip(shutter_speeds[::3], shutter_speed_labels[::3])
-        )
-    else:
-        iso_options = list(zip(iso_values, iso_labels))
-        aperture_options = list(zip(apertures, aperture_labels))
-        shutter_speed_options = list(zip(shutter_speeds, shutter_speed_labels))
+    iso_options, aperture_options, shutter_speed_options = (
+        get_filtered_options(stop_choice)
+    )
+    ev_options = generate_ev_options()
 
-    defaults = {
-        "aperture": 16.0,
-        "shutterspeed": 1 / 125,
-        "iso": 100,
-        "ev": 15,
-    }
-
-    data = {
-        "aperture": float(request.form.get("aperture", defaults["aperture"])),
-        "shutterspeed": float(
-            request.form.get("shutterspeed", defaults["shutterspeed"])
-        ),
-        "iso": int(request.form.get("iso", defaults["iso"])),
-        "ev": int(request.form.get("ev", defaults["ev"])),
-        "lock_aperture": "lock_aperture" in request.form,
-        "lock_shutter_speed": "lock_shutterspeed" in request.form,
-        "lock_iso": "lock_iso" in request.form,
-        "result": None,
-        "result_key": "",
-        "error": "",
-        "warning": "",
-    }
+    data = extract_form_data(request, DEFAULTS)
 
     if request.method == "POST":
-        locks = [
-            data["lock_aperture"],
-            data["lock_shutter_speed"],
-            data["lock_iso"],
-        ]
-        if sum(locks) != 2:
-            data["error"] = (
-                "Please lock exactly two variables to calculate the third."
-            )
+        error = validate_locks(data)
+        if error:
+            data["error"] = error
         else:
-            try:
-                if not data["lock_aperture"]:
-                    exact_a = compute_aperture(
-                        data["iso"], data["ev"], data["shutterspeed"]
-                    )
-                    if exact_a < min(apertures) or exact_a > max(apertures):
-                        data["warning"] = "Calculated aperture is out of range."
-                    else:
-                        data["result"] = find_nearest(apertures, exact_a)
-                        data["result_key"] = "Aperture"
-
-                elif not data["lock_shutter_speed"]:
-                    exact_s = compute_shutter_speed(
-                        data["aperture"], data["iso"], data["ev"]
-                    )
-                    if exact_s < min(shutter_speeds) or exact_s > max(shutter_speeds):
-                        data["warning"] = "Calculated shutter speed is out of range."
-                    else:
-                        nearest = find_nearest(shutter_speeds, exact_s)
-                        data["result"] = to_fraction(nearest)
-                        data["result_key"] = "Shutter Speed"
-
-                elif not data["lock_iso"]:
-                    exact_i = compute_iso(
-                        data["aperture"], data["shutterspeed"], data["ev"]
-                    )
-                    if exact_i < min(iso_values) or exact_i > max(iso_values):
-                        data["warning"] = "Calculated ISO is out of range."
-                    else:
-                        data["result"] = find_nearest(iso_values, exact_i)
-                        data["result_key"] = "ISO"
-            except ValueError as e:
-                data["error"] = f"Invalid input: {e}"
+            data = perform_calculation(data)
 
     return render_template(
         "calculator.html",
