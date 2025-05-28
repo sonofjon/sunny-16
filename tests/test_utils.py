@@ -114,6 +114,7 @@ class TestLabelGeneration(unittest.TestCase):
         self.assertTrue(any("1/" in label for label in labels))
         self.assertIn("1/125", labels)
         self.assertIn("1/250", labels)
+        self.assertIn("1/1.3", labels)  # Test non-integer denominator
 
     def test_generate_ev_options(self):
         """Test EV options generation."""
