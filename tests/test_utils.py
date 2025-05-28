@@ -32,8 +32,15 @@ class TestFindNearest(unittest.TestCase):
     def test_find_nearest_closest_value(self):
         """Test finding closest value when no exact match."""
         values = [1.4, 2.0, 2.8, 4.0, 5.6, 8.0]
-        result = find_nearest(values, 3.0)
-        self.assertEqual(result, 2.8)  # 2.8 is closer than 4.0 in log space
+        target = 3.35
+        # Test a case where linear and log_2 proximity differ.
+        # For target = 3.35:
+        # Linear: |3.35-2.8|=0.55, |3.35-4.0|=0.65. (2.8 is closer)
+        # Log_2:  |log2(3.35)-log2(2.8)|~=0.259
+        #         |log2(3.35)-log2(4.0)|~=0.256
+        # (4.0 is closer in log space, so it should be chosen)
+        result = find_nearest(values, target)
+        self.assertEqual(result, 4.0)
 
     def test_find_nearest_single_value(self):
         """Test with single value list."""
