@@ -168,8 +168,8 @@ class TestPerformCalculation(unittest.TestCase):
     def test_perform_calculation_with_warning(self):
         """Test calculation that produces a warning."""
         data = {
-            "iso": 25600,
-            "ev": 11,
+            "iso": 6400,
+            "ev": 16,
             "shutterspeed": 1,
             "lock_aperture": False,
             "lock_shutter_speed": True,
