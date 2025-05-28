@@ -73,18 +73,13 @@ class TestToFraction(unittest.TestCase):
         result = to_fraction(1)
         self.assertEqual(result, "1")
 
+        result = to_fraction(1 / 1.3)
+        self.assertEqual(result, "1/1.3")  # Test non-integer denominator
+
     def test_to_fraction_invalid_speed(self):
         """Test conversion of invalid shutter speed."""
         with self.assertRaises(ValueError):
             to_fraction(999)  # Not in SHUTTER_SPEEDS
-
-    def test_to_fraction_fractional_speeds(self):
-        """Test conversion of various fractional speeds."""
-        result = to_fraction(1 / 60)
-        self.assertEqual(result, "1/60")
-
-        result = to_fraction(1 / 250)
-        self.assertEqual(result, "1/250")
 
 
 class TestLabelGeneration(unittest.TestCase):
