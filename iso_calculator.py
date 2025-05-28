@@ -4,10 +4,6 @@ This module implements a Flask application to help photographers calculate
 the correct aperture, shutter speed, or ISO based on the Sunny 16 rule and
 ambient light conditions.
 
-Dependencies:
-- Flask
-- Python's math module for calculations
-
 Author: Andreas jonsson
 Contact: ajdev8@gmail.com
 GitHub: https://github.com/sonofjon/sunny-16
