@@ -57,7 +57,8 @@ class TestCalculateShutterSpeed(unittest.TestCase):
         data = {"aperture": 8.0, "iso": 100, "ev": 15}
         success, result = calculate_shutter_speed(data)
         self.assertTrue(success)
-        self.assertIsInstance(result, str)
+        self.assertIsInstance(result, float)
+        self.assertAlmostEqual(result, 1/500.0, places=5)
 
     def test_calculate_shutter_speed_out_of_range_fast(self):
         """Test shutter speed calculation with result too fast."""

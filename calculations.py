@@ -40,9 +40,9 @@ def calculate_shutter_speed(data):
         data (dict): Form data containing aperture, ISO, and EV.
 
     Returns:
-        tuple (bool, str): (success, result_or_warning) where
+        tuple (bool, float or str): (success, result_or_warning) where
             success is True if calculation is within range, False otherwise.
-            result_or_warning is the calculated shutter speed (str) or a
+            result_or_warning is the calculated shutter speed (float) or a
             warning message (str).
     """
     exact_shutter_speed = (data["aperture"] ** 2) / (
@@ -54,7 +54,7 @@ def calculate_shutter_speed(data):
         return False, "Calculated shutter speed is out of range."
 
     nearest_speed = find_nearest(SHUTTER_SPEEDS, exact_shutter_speed)
-    result = to_fraction(nearest_speed)
+    result = nearest_speed
     return True, result
 
 
@@ -103,7 +103,7 @@ def perform_calculation(data):
         elif not data["lock_shutter_speed"]:
             success, result = calculate_shutter_speed(data)
             if success:
-                data["result"] = result
+                data["result"] = to_fraction(result)
                 data["result_key"] = "Shutter Speed"
             else:
                 data["warning"] = result
