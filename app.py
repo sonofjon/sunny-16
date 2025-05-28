@@ -41,10 +41,10 @@ def prepare_form_options(request):
     data = extract_form_data(request, DEFAULTS)
 
     options = {
-        'aperture_options': aperture_options,
-        'shutter_speed_options': shutter_speed_options,
-        'iso_options': iso_options,
-        'ev_options': ev_options
+        "aperture_options": aperture_options,
+        "shutter_speed_options": shutter_speed_options,
+        "iso_options": iso_options,
+        "ev_options": ev_options,
     }
 
     return data, stop_choice, options
@@ -87,10 +87,7 @@ def sunny16_calculator():
         data = process_calculation(data)
 
     return render_template(
-        "calculator.html",
-        **data,
-        stop_choice=stop_choice,
-        **options
+        "calculator.html", **data, stop_choice=stop_choice, **options
     )
 
 

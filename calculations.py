@@ -46,7 +46,9 @@ def calculate_shutter_speed(data):
     exact_shutter_speed = (data["aperture"] ** 2) / (
         (2 ** data["ev"]) * (data["iso"] / 100.0)
     )
-    if exact_shutter_speed < min(SHUTTER_SPEEDS) or exact_shutter_speed > max(SHUTTER_SPEEDS):
+    if exact_shutter_speed < min(SHUTTER_SPEEDS) or exact_shutter_speed > max(
+        SHUTTER_SPEEDS
+    ):
         return False, "Calculated shutter speed is out of range."
 
     nearest_speed = find_nearest(SHUTTER_SPEEDS, exact_shutter_speed)
