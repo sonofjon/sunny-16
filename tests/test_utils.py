@@ -111,8 +111,10 @@ class TestLabelGeneration(unittest.TestCase):
         for label in labels:
             # Should be either "1" or start with "1/"
             self.assertTrue(label == "1" or label.startswith("1/"))
-        self.assertIn("1", labels)  # For 1 second
+        self.assertIn("1", labels)
         self.assertTrue(any("1/" in label for label in labels))
+        self.assertIn("1/2", labels)
+        self.assertIn("1/60", labels)
         self.assertIn("1/125", labels)
         self.assertIn("1/1.3", labels)  # Test non-integer denominator
 
@@ -126,7 +128,7 @@ class TestLabelGeneration(unittest.TestCase):
         ev_values = [option[0] for option in options]
         self.assertEqual(ev_values, sorted(ev_values, reverse=True))
         # Check that we have expected EV values
-        self.assertIn(15, ev_values)
+        self.assertIn(11, ev_values)
         self.assertIn(16, ev_values)
 
 
