@@ -68,8 +68,8 @@ class TestToFraction(unittest.TestCase):
 
     def test_to_fraction_invalid_speed(self):
         """Test conversion of invalid shutter speed."""
-        result = to_fraction(999)  # Not in SHUTTER_SPEEDS
-        self.assertEqual(result, "Unknown speed")
+        with self.assertRaises(ValueError):
+            to_fraction(999)  # Not in SHUTTER_SPEEDS
 
     def test_to_fraction_fractional_speeds(self):
         """Test conversion of various fractional speeds."""
