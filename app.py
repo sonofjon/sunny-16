@@ -23,8 +23,8 @@ from utils import (
 app = Flask(__name__)
 
 
-def process_request_data(request):
-    """Process incoming request and generate form options.
+def prepare_form_options(request):
+    """Prepare form options and extract data from request.
 
     Args:
         request: Flask request object.
@@ -50,8 +50,8 @@ def process_request_data(request):
     return data, stop_choice, options
 
 
-def handle_calculation_request(data):
-    """Handle POST request calculation logic.
+def process_calculation(data):
+    """Process calculation request and handle validation.
 
     Args:
         data (dict): Form data containing all variables and lock states.
@@ -68,8 +68,8 @@ def handle_calculation_request(data):
 
 
 @app.route("/", methods=["GET", "POST"])
-def calculate_variable():
-    """Calculate the photography settings based on the Sunny 16 rule.
+def sunny16_calculator():
+    """Handle requests for the Sunny 16 calculator page.
 
     This route handles both GET and POST requests. On a GET request, it
     renders the form with default settings. On a POST request, it computes
@@ -81,10 +81,10 @@ def calculate_variable():
         str: Rendered HTML page with form inputs, and possibly calculation
             results, warnings, or error messages.
     """
-    data, stop_choice, options = process_request_data(request)
+    data, stop_choice, options = prepare_form_options(request)
 
     if request.method == "POST":
-        data = handle_calculation_request(data)
+        data = process_calculation(data)
 
     return render_template(
         "calculator.html",
