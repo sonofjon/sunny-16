@@ -30,9 +30,9 @@ class TestCalculateAperture(unittest.TestCase):
     def test_calculate_aperture_out_of_range_low(self):
         """Test aperture calculation with result below minimum."""
         data = {
-            "iso": 100,
-            "ev": 20,  # Very bright conditions
-            "shutterspeed": 1 / 1000,  # Very fast shutter
+            "ev": 11,  # Low light
+            "iso": 100,  # Low ISO
+            "shutterspeed": 1 / 8000,  # Fast shutter speed
         }
         success, result = calculate_aperture(data)
         self.assertFalse(success)
@@ -41,9 +41,9 @@ class TestCalculateAperture(unittest.TestCase):
     def test_calculate_aperture_out_of_range_high(self):
         """Test aperture calculation with result above maximum."""
         data = {
-            "iso": 25600,  # Very high ISO
-            "ev": 11,  # Low light
-            "shutterspeed": 1,  # Very slow shutter
+            "ev": 16,  # Bright conditions
+            "iso": 6400,  # High ISO
+            "shutterspeed": 1,  # Slow shutter
         }
         success, result = calculate_aperture(data)
         self.assertFalse(success)
@@ -65,9 +65,9 @@ class TestCalculateShutterSpeed(unittest.TestCase):
     def test_calculate_shutter_speed_out_of_range_fast(self):
         """Test shutter speed calculation with result too fast."""
         data = {
-            "aperture": 1.4,  # Very wide aperture
-            "iso": 100,
-            "ev": 16,  # Very bright conditions
+            "aperture": 1.4,  # Wide aperture
+            "iso": 6400,  # High ISO
+            "ev": 16,  # Bright conditions
         }
         success, result = calculate_shutter_speed(data)
         self.assertFalse(success)
@@ -76,8 +76,8 @@ class TestCalculateShutterSpeed(unittest.TestCase):
     def test_calculate_shutter_speed_out_of_range_slow(self):
         """Test shutter speed calculation with result too slow."""
         data = {
-            "aperture": 22,  # Very narrow aperture
-            "iso": 100,
+            "aperture": 22,  # Narrow aperture
+            "iso": 100,  # Low ISO
             "ev": 11,  # Low light
         }
         success, result = calculate_shutter_speed(data)
@@ -100,9 +100,9 @@ class TestCalculateISO(unittest.TestCase):
     def test_calculate_iso_out_of_range_low(self):
         """Test ISO calculation with result below minimum."""
         data = {
-            "aperture": 1.4,  # Very wide aperture
-            "shutterspeed": 1 / 1000,  # Very fast shutter
-            "ev": 16,  # Very bright conditions
+            "aperture": 1.4,  # Wide aperture
+            "shutterspeed": 1,  # Slow shutter
+            "ev": 16,  # Bright conditions
         }
         success, result = calculate_iso(data)
         self.assertFalse(success)
@@ -111,8 +111,8 @@ class TestCalculateISO(unittest.TestCase):
     def test_calculate_iso_out_of_range_high(self):
         """Test ISO calculation with result above maximum."""
         data = {
-            "aperture": 22,  # Very narrow aperture
-            "shutterspeed": 1 / 8000,  # Very fast shutter
+            "aperture": 22,  # Narrow aperture
+            "shutterspeed": 1 / 8000,  # Fast shutter
             "ev": 11,  # Low light
         }
         success, result = calculate_iso(data)
