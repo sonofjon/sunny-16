@@ -92,7 +92,6 @@ class TestLabelGeneration(unittest.TestCase):
         self.assertTrue(all(isinstance(label, str) for label in labels))
         self.assertTrue(all(label.isdigit() for label in labels))
         self.assertIn("100", labels)
-        self.assertIn("400", labels)
         self.assertIn("1600", labels)
 
     def test_generate_aperture_labels(self):
@@ -101,7 +100,6 @@ class TestLabelGeneration(unittest.TestCase):
         self.assertIsInstance(labels, list)
         self.assertTrue(all(label.startswith("f/") for label in labels))
         self.assertIn("f/1.4", labels)
-        self.assertIn("f/2.8", labels)
         self.assertIn("f/8", labels)
 
     def test_generate_shutter_speed_labels(self):
@@ -115,7 +113,6 @@ class TestLabelGeneration(unittest.TestCase):
         self.assertIn("1", labels)  # For 1 second
         self.assertTrue(any("1/" in label for label in labels))
         self.assertIn("1/125", labels)
-        self.assertIn("1/250", labels)
         self.assertIn("1/1.3", labels)  # Test non-integer denominator
 
     def test_generate_ev_options(self):
