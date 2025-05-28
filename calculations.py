@@ -22,13 +22,13 @@ def calculate_aperture(data):
             result_or_warning is either the calculated value or warning
             message.
     """
-    exact_a = math.sqrt(
+    exact_aperture = math.sqrt(
         (data["iso"] / 100.0) * (2 ** data["ev"]) * data["shutterspeed"]
     )
-    if exact_a < min(APERTURES) or exact_a > max(APERTURES):
+    if exact_aperture < min(APERTURES) or exact_aperture > max(APERTURES):
         return False, "Calculated aperture is out of range."
 
-    result = find_nearest(APERTURES, exact_a)
+    result = find_nearest(APERTURES, exact_aperture)
     return True, result
 
 
@@ -43,14 +43,14 @@ def calculate_shutter_speed(data):
             result_or_warning is either the calculated value or warning
             message.
     """
-    exact_s = (data["aperture"] ** 2) / (
+    exact_shutter_speed = (data["aperture"] ** 2) / (
         (2 ** data["ev"]) * (data["iso"] / 100.0)
     )
-    if exact_s < min(SHUTTER_SPEEDS) or exact_s > max(SHUTTER_SPEEDS):
+    if exact_shutter_speed < min(SHUTTER_SPEEDS) or exact_shutter_speed > max(SHUTTER_SPEEDS):
         return False, "Calculated shutter speed is out of range."
 
-    nearest = find_nearest(SHUTTER_SPEEDS, exact_s)
-    result = to_fraction(nearest)
+    nearest_speed = find_nearest(SHUTTER_SPEEDS, exact_shutter_speed)
+    result = to_fraction(nearest_speed)
     return True, result
 
 
@@ -65,15 +65,15 @@ def calculate_iso(data):
             result_or_warning is either the calculated value or warning
             message.
     """
-    exact_i = (
+    exact_iso = (
         100.0
         * ((data["aperture"] ** 2) / data["shutterspeed"])
         / (2 ** data["ev"])
     )
-    if exact_i < min(ISO_VALUES) or exact_i > max(ISO_VALUES):
+    if exact_iso < min(ISO_VALUES) or exact_iso > max(ISO_VALUES):
         return False, "Calculated ISO is out of range."
 
-    result = find_nearest(ISO_VALUES, exact_i)
+    result = find_nearest(ISO_VALUES, exact_iso)
     return True, result
 
 
