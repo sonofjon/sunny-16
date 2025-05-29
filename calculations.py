@@ -95,7 +95,7 @@ def perform_calculation(data):
         if not data["lock_aperture"]:
             success, result = calculate_aperture(data)
             if success:
-                data["result"] = result
+                data["result"] = f"f/{result}"
                 data["result_key"] = "Aperture"
             else:
                 data["warning"] = result
