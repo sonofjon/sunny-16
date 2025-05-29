@@ -9,11 +9,59 @@
     rel="stylesheet">
   <style>
     .container { margin-top: 20px; }
+    .explanation-text { font-size: 0.9rem; color: #555; margin-bottom: 10px;}
+    details > summary {
+        cursor: pointer;
+        margin-bottom: 0.5rem;
+    }
+    .card.mb-4 { margin-bottom: 1rem !important; } /* Reduce margin if details is open */
   </style>
 </head>
 <body>
   <div class="container">
     <h1 class="text-center mb-4">Sunny 16 Calculator</h1>
+
+    <details class="mb-3">
+      <summary>About This Calculator</summary>
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">The Sunny 16 Rule</h5>
+          <p class="card-text explanation-text">
+            The <a href="https://en.wikipedia.org/wiki/Sunny_16_rule"
+            target="_blank">Sunny 16 rule</a> is a guideline for estimating
+            correct daylight exposures without a light meter. On a sunny
+            day, it suggests setting aperture to f/16 and shutter speed to
+            the reciprocal of the ISO (e.g., for ISO 100, the shutter speed
+            would be 1/100s). This calculator takes this rule of thumb as a
+            starting point, allowing you to find equivalent exposure
+            combinations by adjusting aperture, shutter speed, or ISO, and
+            adapt the settings for various light conditions beyond just
+            bright sun.
+          </p>
+          <h5 class="card-title">How to Use This Calculator</h5>
+          <p class="card-text explanation-text">
+            1. Select the current light condition using the "Exposure Value"
+               dropdown.<br>
+            2. Set the two exposure parameters you know (e.g., ISO and Aperture).<br>
+            3. Check the "Lock" box next to these two known parameters.<br>
+            4. Click "Calculate" to find the third unknown parameter
+               (e.g., Shutter Speed).<br>
+            <em>Note: Exactly two parameters must be locked for a calculation.</em>
+          </p>
+          <h5 class="card-title">Stop Increments</h5>
+          <p class="card-text explanation-text">
+            This calculator allows you to work with exposure parameters in
+            either "Full Stop" or "1/3 Stop" increments. Full stops
+            represent a doubling or halving of the amount of light (e.g.,
+            aperture from f/2.8 to f/4, or ISO from 100 to 200).
+            Selecting "1/3 Stop" provides two additional intermediate
+            settings between each full stop, offering more precise control
+            over the exposure.
+          </p>
+        </div>
+      </div>
+    </details>
+
     <form method="post" class="needs-validation" novalidate>
       <div class="row g-3">
         <!-- Stop Increment Choice -->
@@ -113,6 +161,14 @@
       {% endif %}
     </form>
   </div>
+  <footer>
+    <hr>
+    <p class="text-center small">
+      © 2025 Andreas Jonsson |
+      <a href="https://github.com/sonofjon/sunny-16" target="_blank" rel="noopener noreferrer">View on GitHub</a> |
+    Calculator provides estimates. Always test your settings.
+    </p>
+  </footer>
 
   <script
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
