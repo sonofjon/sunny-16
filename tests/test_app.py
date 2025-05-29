@@ -51,7 +51,7 @@ class TestPrepareFormOptions(unittest.TestCase):
         mock_extract.return_value = {}
 
         mock_request = Mock()
-        mock_request.form.get.return_value = None  # No stop_increment in form
+        mock_request.form = {}  # Simulate no "stop_increment" in form
 
         data, stop_choice, options = prepare_form_options(mock_request)
 
