@@ -8,7 +8,11 @@ and exposure value relationships.
 import math
 
 from config import APERTURES, ISO_VALUES, SHUTTER_SPEEDS
-from utils import find_nearest, to_fraction
+from utils import (
+    find_nearest,
+    to_fraction,
+    format_value_to_n_significant_digits,
+)
 
 
 def calculate_aperture(data):
@@ -56,7 +60,10 @@ def calculate_shutter_speed(data):
     exact_shutter_speed = (data["aperture"] ** 2) / (
         (2 ** data["ev"]) * (data["iso"] / 100.0)
     )
-    exact_shutter_speed_str = f"{exact_shutter_speed:.2f}s"
+    # Format to 2 significant digits, fixed-point notation for warnings.
+    exact_shutter_speed_str = (
+        format_value_to_n_significant_digits(exact_shutter_speed, 2) + "s"
+    )
 
     if exact_shutter_speed < min(SHUTTER_SPEEDS):
         return False, (
@@ -146,5 +153,9 @@ def perform_calculation(data):
 
     except ValueError as e:
         data["error"] = f"Invalid input: {e}"
+    except (
+        Exception
+    ) as e:  # Catch any other unexpected errors during formatting
+        data["error"] = f"An unexpected error occurred: {e}"
 
     return data

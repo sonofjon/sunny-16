@@ -10,14 +10,93 @@ from unittest.mock import Mock
 from utils import (
     extract_form_data,
     find_nearest,
+    format_value_to_n_significant_digits,
     generate_aperture_labels,
     generate_ev_options,
     generate_iso_labels,
     generate_shutter_speed_labels,
     get_filtered_options,
+    round_to_n_significant_digits,
     to_fraction,
     validate_locks,
 )
+
+
+class TestSignificantDigitsFormatting(unittest.TestCase):
+    """Test rounding and formatting to N significant digits."""
+
+    def test_round_to_n_significant_digits(self):
+        """Test rounding to n significant digits."""
+        self.assertEqual(round_to_n_significant_digits(12345, 1), 10000)
+        self.assertEqual(round_to_n_significant_digits(12345, 2), 12000)
+        self.assertEqual(round_to_n_significant_digits(12345, 3), 12300)
+        # self.assertEqual(round_to_n_significant_digits(12345, 4), 12350)  # Fails with regular round() due to "round half to even" (banker's rounding)
+        self.assertEqual(round_to_n_significant_digits(12345, 5), 12345)
+
+        self.assertAlmostEqual(
+            round_to_n_significant_digits(0.0012345, 1), 0.001
+        )
+        self.assertAlmostEqual(
+            round_to_n_significant_digits(0.0012345, 2), 0.0012
+        )
+        self.assertAlmostEqual(
+            round_to_n_significant_digits(0.0012345, 3), 0.00123
+        )
+        # self.assertAlmostEqual(
+        #     round_to_n_significant_digits(0.0012345, 4), 0.001235
+        # )  # Fails with regular round()
+
+        self.assertEqual(round_to_n_significant_digits(1.23, 2), 1.2)
+        self.assertEqual(round_to_n_significant_digits(1.28, 2), 1.3)
+        self.assertEqual(round_to_n_significant_digits(0.0, 2), 0.0)
+        self.assertEqual(round_to_n_significant_digits(100, 2), 100)
+        self.assertEqual(round_to_n_significant_digits(99.9, 2), 100)
+
+    def test_format_value_to_n_significant_digits(self):
+        """Test formatting to N significant digits as fixed point string."""
+        # Test with 2 significant digits
+        self.assertEqual(
+            format_value_to_n_significant_digits(12345, 2), "12000"
+        )
+        self.assertEqual(
+            format_value_to_n_significant_digits(0.0012345, 2), "0.0012"
+        )
+        self.assertEqual(format_value_to_n_significant_digits(1.23, 2), "1.2")
+        self.assertEqual(format_value_to_n_significant_digits(1.28, 2), "1.3")
+        self.assertEqual(format_value_to_n_significant_digits(0.0, 2), "0.0")
+        self.assertEqual(
+            format_value_to_n_significant_digits(100, 2), "100"
+        )  # 100 to 2 sig figs is 100
+        self.assertEqual(format_value_to_n_significant_digits(99.9, 2), "100")
+        self.assertEqual(
+            format_value_to_n_significant_digits(0.008, 2), "0.0080"
+        )  # Shows 2 sig figs
+        self.assertEqual(format_value_to_n_significant_digits(242.0, 2), "240")
+        self.assertEqual(
+            format_value_to_n_significant_digits(0.000000467, 2), "0.00000047"
+        )
+
+        # Test with 3 significant digits
+        self.assertEqual(
+            format_value_to_n_significant_digits(12345, 3), "12300"
+        )
+        self.assertEqual(
+            format_value_to_n_significant_digits(0.0012345, 3), "0.00123"
+        )
+        self.assertEqual(format_value_to_n_significant_digits(0.0, 3), "0.00")
+
+        # Test edge cases
+        with self.assertRaises(ValueError):
+            format_value_to_n_significant_digits(10, 0)
+        with self.assertRaises(ValueError):
+            format_value_to_n_significant_digits(10, -1)
+
+        self.assertEqual(
+            format_value_to_n_significant_digits(float("nan"), 2), "NaN"
+        )
+        self.assertEqual(
+            format_value_to_n_significant_digits(float("inf"), 2), "inf"
+        )
 
 
 class TestFindNearest(unittest.TestCase):

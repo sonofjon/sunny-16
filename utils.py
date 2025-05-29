@@ -15,6 +15,75 @@ from config import (
 )
 
 
+def round_to_n_significant_digits(value, n):
+    """Round a number to a specified number of significant digits.
+
+    Args:
+        value (float): The number to round.
+        n (int): The number of significant digits.
+
+    Returns:
+        float: The number rounded to n significant digits.
+
+    Raises:
+        ValueError: If n is not a positive integer.
+    """
+    if not isinstance(n, int) or n <= 0:
+        raise ValueError(
+            "Number of significant digits must be a positive integer."
+        )
+    if value == 0 or math.isnan(value) or math.isinf(value):
+        return value
+    return round(value, n - 1 - int(math.floor(math.log10(abs(value)))))
+
+
+def format_value_to_n_significant_digits(value, n_sig_figs):
+    """Format a value to n significant digits using fixed-point notation.
+
+    This function first rounds the value to the specified number of
+    significant digits, then formats it as a string using fixed-point
+    notation, attempting to show the correct number of decimal places to
+    represent the significant digits.
+
+    Args:
+        value (float): The number to format.
+        n_sig_figs (int): The desired number of significant digits.
+
+    Returns:
+        str: The formatted string representation of the number.
+
+    Raises:
+        ValueError: If n_sig_figs is not a positive integer.
+    """
+    if not isinstance(n_sig_figs, int) or n_sig_figs <= 0:
+        raise ValueError(
+            "Number of significant digits must be a positive integer."
+        )
+
+    if math.isnan(value):
+        return "NaN"
+    if math.isinf(value):
+        return "inf" if value > 0 else "-inf"
+
+    rounded_value = round_to_n_significant_digits(value, n_sig_figs)
+
+    if rounded_value == 0:
+        # Format 0.0, 0.00 etc., depending on n_sig_figs for consistency.
+        # e.g., for 2 significant digits, display "0.0"
+        return f"{0.0:.{max(0, n_sig_figs - 1)}f}"
+
+    # Determine decimal places needed for the rounded_value to show n_sig_figs
+    exponent = math.floor(math.log10(abs(rounded_value)))
+    # Decimal places needed to display the Nth significant digit
+    decimal_places = max(0, -(exponent - (n_sig_figs - 1)))
+
+    # Cap decimal places to a practical limit (e.g., 10) for very small numbers
+    # that didn't round to zero but would require excessive decimal places.
+    decimal_places = min(decimal_places, 10)
+
+    return f"{rounded_value:.{decimal_places}f}"
+
+
 def find_nearest(possible_values, target_value):
     """Find the closest value based on log₂-scale (stop) difference.
 
