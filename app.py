@@ -94,5 +94,6 @@ def sunny16_calculator():
 if __name__ == "__main__":
     # app.run(debug=True)  # App runs on localhost (127.0.0.1:5000)
     # app.run(host='0.0.0.0', debug=True)  # App accessible on local network (0.0.0.0:5000)
-    app.run(host='0.0.0.0', port=5001, debug=True)  # App accessible on local network, port 5001
-
+    app.run(
+        host="0.0.0.0", port=5001, debug=True
+    )  # App accessible on local network, port 5001

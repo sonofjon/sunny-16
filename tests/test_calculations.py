@@ -111,7 +111,9 @@ class TestCalculateISO(unittest.TestCase):
         success, result = calculate_iso(data)
         self.assertFalse(success)
         self.assertIn("lower than available", result)
-        self.assertIn("narrower aperture (larger f-number) or a faster", result)
+        self.assertIn(
+            "narrower aperture (larger f-number) or a faster", result
+        )
 
     def test_calculate_iso_out_of_range_high(self):
         """Test ISO calculation with result above maximum."""

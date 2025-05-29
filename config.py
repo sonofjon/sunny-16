@@ -38,7 +38,7 @@ LIGHT_CONDITIONS = {
 # Default values
 DEFAULTS = {
     "aperture": 16.0,
-    "shutterspeed": 1/125,
+    "shutterspeed": 1 / 125,
     "iso": 100,
     "ev": 15,
 }
