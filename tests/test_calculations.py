@@ -36,7 +36,8 @@ class TestCalculateAperture(unittest.TestCase):
         }
         success, result = calculate_aperture(data)
         self.assertFalse(success)
-        self.assertEqual(result, "Calculated aperture is out of range.")
+        self.assertIn("wider than available", result)
+        self.assertIn("decreasing ISO or using a faster shutter speed", result)
 
     def test_calculate_aperture_out_of_range_high(self):
         """Test aperture calculation with result above maximum."""
@@ -47,7 +48,8 @@ class TestCalculateAperture(unittest.TestCase):
         }
         success, result = calculate_aperture(data)
         self.assertFalse(success)
-        self.assertEqual(result, "Calculated aperture is out of range.")
+        self.assertIn("narrower than available", result)
+        self.assertIn("increasing ISO or using a slower shutter speed", result)
 
 
 class TestCalculateShutterSpeed(unittest.TestCase):
@@ -71,7 +73,8 @@ class TestCalculateShutterSpeed(unittest.TestCase):
         }
         success, result = calculate_shutter_speed(data)
         self.assertFalse(success)
-        self.assertEqual(result, "Calculated shutter speed is out of range.")
+        self.assertIn("faster than available", result)
+        self.assertIn("decreasing ISO or using a narrower aperture", result)
 
     def test_calculate_shutter_speed_out_of_range_slow(self):
         """Test shutter speed calculation with result too slow."""
@@ -82,7 +85,8 @@ class TestCalculateShutterSpeed(unittest.TestCase):
         }
         success, result = calculate_shutter_speed(data)
         self.assertFalse(success)
-        self.assertEqual(result, "Calculated shutter speed is out of range.")
+        self.assertIn("slower than available", result)
+        self.assertIn("increasing ISO or using a wider aperture", result)
 
 
 class TestCalculateISO(unittest.TestCase):
@@ -106,7 +110,8 @@ class TestCalculateISO(unittest.TestCase):
         }
         success, result = calculate_iso(data)
         self.assertFalse(success)
-        self.assertEqual(result, "Calculated ISO is out of range.")
+        self.assertIn("lower than available", result)
+        self.assertIn("narrower aperture (larger f-number) or a faster", result)
 
     def test_calculate_iso_out_of_range_high(self):
         """Test ISO calculation with result above maximum."""
@@ -117,7 +122,8 @@ class TestCalculateISO(unittest.TestCase):
         }
         success, result = calculate_iso(data)
         self.assertFalse(success)
-        self.assertEqual(result, "Calculated ISO is out of range.")
+        self.assertIn("higher than available", result)
+        self.assertIn("wider aperture (smaller f-number) or a slower", result)
 
 
 class TestPerformCalculation(unittest.TestCase):
@@ -136,6 +142,7 @@ class TestPerformCalculation(unittest.TestCase):
         result_data = perform_calculation(data)
         self.assertIn("result", result_data)
         self.assertEqual(result_data["result_key"], "Aperture")
+        self.assertEqual(result_data["result"], "f/16")
 
     def test_perform_calculation_shutter_speed_unlocked(self):
         """Test calculation when shutter speed is unlocked."""
@@ -150,6 +157,7 @@ class TestPerformCalculation(unittest.TestCase):
         result_data = perform_calculation(data)
         self.assertIn("result", result_data)
         self.assertEqual(result_data["result_key"], "Shutter Speed")
+        self.assertEqual(result_data["result"], "1/125")
 
     def test_perform_calculation_iso_unlocked(self):
         """Test calculation when ISO is unlocked."""
@@ -164,6 +172,7 @@ class TestPerformCalculation(unittest.TestCase):
         result_data = perform_calculation(data)
         self.assertIn("result", result_data)
         self.assertEqual(result_data["result_key"], "ISO")
+        self.assertEqual(result_data["result"], 1600)
 
     def test_perform_calculation_with_warning(self):
         """Test calculation that produces a warning."""

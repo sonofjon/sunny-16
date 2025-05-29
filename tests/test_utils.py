@@ -150,7 +150,9 @@ class TestGetFilteredOptions(unittest.TestCase):
         self.assertTrue(all(len(opt) == 2 for opt in shutter_opts))
 
         # Full stops should have fewer options than third stops
-        iso_third, aperture_third, shutter_third = get_filtered_options("third")
+        iso_third, aperture_third, shutter_third = get_filtered_options(
+            "third"
+        )
         self.assertLess(len(iso_opts), len(iso_third))
         self.assertLess(len(aperture_opts), len(aperture_third))
         self.assertLess(len(shutter_opts), len(shutter_third))

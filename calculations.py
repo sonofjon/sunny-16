@@ -26,8 +26,16 @@ def calculate_aperture(data):
     exact_aperture = math.sqrt(
         (data["iso"] / 100.0) * (2 ** data["ev"]) * data["shutterspeed"]
     )
-    if exact_aperture < min(APERTURES) or exact_aperture > max(APERTURES):
-        return False, "Calculated aperture is out of range."
+    if exact_aperture < min(APERTURES):
+        return False, (
+            f"Calculated aperture f/{exact_aperture:.1f} is wider than "
+            "available. Try decreasing ISO or using a faster shutter speed."
+        )
+    if exact_aperture > max(APERTURES):
+        return False, (
+            f"Calculated aperture f/{exact_aperture:.1f} is narrower than "
+            "available. Try increasing ISO or using a slower shutter speed."
+        )
 
     result = find_nearest(APERTURES, exact_aperture)
     return True, result
@@ -48,10 +56,20 @@ def calculate_shutter_speed(data):
     exact_shutter_speed = (data["aperture"] ** 2) / (
         (2 ** data["ev"]) * (data["iso"] / 100.0)
     )
-    if exact_shutter_speed < min(SHUTTER_SPEEDS) or exact_shutter_speed > max(
-        SHUTTER_SPEEDS
-    ):
-        return False, "Calculated shutter speed is out of range."
+    exact_shutter_speed_str = f"{exact_shutter_speed:.2f}s"
+
+    if exact_shutter_speed < min(SHUTTER_SPEEDS):
+        return False, (
+            f"Calculated shutter speed ({exact_shutter_speed_str}) is faster "
+            "than available. Try decreasing ISO or using a narrower aperture "
+            "(larger f-number)."
+        )
+    if exact_shutter_speed > max(SHUTTER_SPEEDS):
+        return False, (
+            f"Calculated shutter speed ({exact_shutter_speed_str}) is slower "
+            "than available. Try increasing ISO or using a wider aperture "
+            "(smaller f-number)."
+        )
 
     nearest_speed = find_nearest(SHUTTER_SPEEDS, exact_shutter_speed)
     result = nearest_speed
@@ -75,8 +93,18 @@ def calculate_iso(data):
         * ((data["aperture"] ** 2) / data["shutterspeed"])
         / (2 ** data["ev"])
     )
-    if exact_iso < min(ISO_VALUES) or exact_iso > max(ISO_VALUES):
-        return False, "Calculated ISO is out of range."
+    if exact_iso < min(ISO_VALUES):
+        return False, (
+            f"Calculated ISO {exact_iso:.0f} is lower than available. "
+            "Try using a narrower aperture (larger f-number) or a faster "
+            "shutter speed."
+        )
+    if exact_iso > max(ISO_VALUES):
+        return False, (
+            f"Calculated ISO {exact_iso:.0f} is higher than available. "
+            "Try using a wider aperture (smaller f-number) or a slower "
+            "shutter speed."
+        )
 
     result = find_nearest(ISO_VALUES, exact_iso)
     return True, result
