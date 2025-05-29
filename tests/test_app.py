@@ -171,7 +171,7 @@ class TestFlaskRoutes(unittest.TestCase):
         """Test POST request with valid calculation data."""
         form_data = {
             "aperture": "8.0",
-            "shutterspeed": "0.008",  # 1/125
+            "shutterspeed": "0.001",  # 1/1000
             "iso": "100",
             "ev": "15",
             "lock_aperture": "on",
@@ -301,8 +301,8 @@ class TestIntegration(unittest.TestCase):
     def test_complete_iso_calculation(self):
         """Test complete workflow for ISO calculation."""
         form_data = {
-            "aperture": "8.0",
-            "shutterspeed": "0.008",  # 1/125
+            "aperture": "16.0",
+            "shutterspeed": "0.001",  # 1/1000
             "ev": "15",
             "lock_aperture": "on",
             "lock_shutterspeed": "on",
