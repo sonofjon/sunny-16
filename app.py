@@ -40,6 +40,22 @@ def prepare_form_options(request):
     ev_options = generate_ev_options()
     data = extract_form_data(request, DEFAULTS)
 
+    if stop_choice == "full":
+        # Get the actual values from the filtered full-stop options
+        valid_full_stop_iso_values = [opt[0] for opt in iso_options]
+        valid_full_stop_aperture_values = [opt[0] for opt in aperture_options]
+        valid_full_stop_shutter_speed_values = [
+            opt[0] for opt in shutter_speed_options
+        ]
+
+        # Use DEFAULTS if current selection is not a full stop
+        if data["iso"] not in valid_full_stop_iso_values:
+            data["iso"] = DEFAULTS["iso"]
+        if data["aperture"] not in valid_full_stop_aperture_values:
+            data["aperture"] = DEFAULTS["aperture"]
+        if data["shutterspeed"] not in valid_full_stop_shutter_speed_values:
+            data["shutterspeed"] = DEFAULTS["shutterspeed"]
+
     options = {
         "aperture_options": aperture_options,
         "shutter_speed_options": shutter_speed_options,
