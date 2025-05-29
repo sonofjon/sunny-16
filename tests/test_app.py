@@ -183,6 +183,7 @@ class TestFlaskRoutes(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         # Should contain some calculation result or warning
         self.assertIn(b"Sunny 16 Calculator", response.data)
+        self.assertIn(b"Result:", response.data)
 
     def test_post_request_with_invalid_locks(self):
         """Test POST request with invalid lock configuration."""
