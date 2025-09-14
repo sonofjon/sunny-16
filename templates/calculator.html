@@ -99,37 +99,48 @@
         <!-- ISO Selection -->
         <div class="col-md-6">
           <label for="iso" class="form-label">ISO:</label>
-          <select name="iso" id="iso" class="form-select">
+          <div class="d-flex align-items-center">
+            <select name="iso" id="iso" class="form-select me-2">
             {% for i, label in iso_options %}
             <option value="{{ i }}"
               {{ 'selected' if i == iso }}>
               {{ label }}
             </option>
             {% endfor %}
-          </select>
-          <input type="checkbox" name="lock_iso"
-            {{ 'checked' if lock_iso }}> Lock
+            </select>
+            <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="lock_iso" name="lock_iso"
+              {{ 'checked' if lock_iso }}>
+            <label class="form-check-label" for="lock_iso">Lock</label>
+            </div>
+          </div>
         </div>
 
         <!-- Aperture Selection -->
         <div class="col-md-6">
           <label for="aperture" class="form-label">Aperture:</label>
-          <select name="aperture" id="aperture" class="form-select">
+          <div class="d-flex align-items-center">
+            <select name="aperture" id="aperture" class="form-select me-2">
             {% for a, label in aperture_options %}
             <option value="{{ a }}"
               {{ 'selected' if a == aperture }}>
               {{ label }}
             </option>
             {% endfor %}
-          </select>
-          <input type="checkbox" name="lock_aperture"
-            {{ 'checked' if lock_aperture }}> Lock
+            </select>
+            <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="lock_aperture" name="lock_aperture"
+              {{ 'checked' if lock_aperture }}>
+            <label class="form-check-label" for="lock_aperture">Lock</label>
+            </div>
+          </div>
         </div>
 
         <!-- Shutter Speed Selection -->
         <div class="col-md-6">
           <label for="shutterspeed" class="form-label">Shutter Speed:</label>
-          <select name="shutterspeed" id="shutterspeed"
+          <div class="d-flex align-items-center">
+            <select name="shutterspeed" id="shutterspeed"
               class="form-select">
             {% for speed, label in shutter_speed_options %}
             <option value="{{ speed }}"
@@ -138,8 +149,12 @@
             </option>
             {% endfor %}
           </select>
-          <input type="checkbox" name="lock_shutterspeed"
-            {{ 'checked' if lock_shutter_speed }}> Lock
+          <div class="form-check form-switch d-inline-block ms-2 align-middle">
+            <input class="form-check-input" type="checkbox" id="lock_shutterspeed" name="lock_shutterspeed"
+              {{ 'checked' if lock_shutter_speed }}>
+            <label class="form-check-label" for="lock_shutterspeed">Lock</label>
+            </div>
+          </div>
         </div>
 
         <!-- Submission Button -->
