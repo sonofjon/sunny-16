@@ -67,21 +67,7 @@
 
     <form method="post" class="needs-validation" novalidate>
       <div class="row g-3">
-        <!-- Stop Increment Choice -->
-        <div class="col-md-12">
-          <label for="stop_increment" class="form-label">Choose Stop Increment:</label>
-          <select name="stop_increment" id="stop_increment"
-              class="form-select" onchange="this.form.submit()">
-            <option value="full"
-              {% if stop_choice == 'full' %}selected{% endif %}>
-              Full Stop
-            </option>
-            <option value="third"
-              {% if stop_choice == 'third' %}selected{% endif %}>
-              1/3 Stop
-            </option>
-          </select>
-        </div>
+
 
         <!-- Exposure Value Selection -->
         <div class="col-md-6">
@@ -165,7 +151,17 @@
 
         <!-- Submission Button -->
         <div class="col-12">
-          <button type="submit" class="btn btn-primary">Calculate</button>
+          <div class="d-flex align-items-center gap-3">
+            <button type="submit" class="btn btn-primary">Calculate</button>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="stop_increment" name="stop_increment"
+                     value="third" onchange="this.form.submit()"
+                     {% if stop_choice == 'third' %}checked{% endif %}>
+              <label class="form-check-label" for="stop_increment">
+                1/3 Stops
+              </label>
+            </div>
+          </div>
         </div>
       </div>
 

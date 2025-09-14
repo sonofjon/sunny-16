@@ -33,7 +33,8 @@ def prepare_form_options(request):
         tuple: (data, stop_choice, options_dict) containing extracted form
             data, stop increment choice, and all dropdown options.
     """
-    stop_choice = request.form.get("stop_increment", "full")
+    # Handle checkbox: if checked, value="third", if unchecked, no value sent = "full"
+    stop_choice = "third" if request.form.get("stop_increment") else "full"
     iso_options, aperture_options, shutter_speed_options = (
         get_filtered_options(stop_choice)
     )
