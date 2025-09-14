@@ -86,14 +86,20 @@
         <!-- Exposure Value Selection -->
         <div class="col-md-6">
           <label for="ev" class="form-label">Exposure Value:</label>
-          <select name="ev" id="ev" class="form-select" required>
-            {% for value, description in ev_options %}
-            <option value="{{ value }}"
-              {{ 'selected' if value == ev }}>
-              {{ description }}
-            </option>
-            {% endfor %}
-          </select>
+          <div class="d-flex align-items-center">
+            <select name="ev" id="ev" class="form-select me-2" required>
+              {% for value, description in ev_options %}
+              <option value="{{ value }}"
+                {{ 'selected' if value == ev }}>
+                {{ description }}
+              </option>
+              {% endfor %}
+            </select>
+            <div class="form-check form-switch" style="visibility: hidden;">
+              <input class="form-check-input" type="checkbox">
+              <label class="form-check-label">Lock</label>
+            </div>
+          </div>
         </div>
 
         <!-- ISO Selection -->
